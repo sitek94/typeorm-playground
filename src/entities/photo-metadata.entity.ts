@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  type Relation,
 } from 'typeorm'
 import {Photo} from './photo.entity'
 
@@ -29,5 +30,5 @@ export class PhotoMetadata {
 
   @OneToOne(() => Photo, photo => photo.metadata)
   @JoinColumn()
-  photo: Photo
+  photo: Relation<Photo>
 }
