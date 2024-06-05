@@ -2,6 +2,15 @@
   "name": "typeorm",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.20"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
