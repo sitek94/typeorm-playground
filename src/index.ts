@@ -1,9 +1,13 @@
 import {AppDataSource} from './data-source'
+import {Author} from './entities/author.entity'
 import {PhotoMetadata} from './entities/photo-metadata.entity'
 import {Photo} from './entities/photo.entity'
+import {User} from './entities/user.entity'
 
 AppDataSource.initialize()
   .then(async () => {
+    cleanup()
+
     console.log('Database initialized\n')
 
     // create a photo
@@ -41,9 +45,17 @@ AppDataSource.initialize()
     console.log('All photos with metadata:')
     console.log(photos)
   })
-  .then(() => {
-    // Clean up DB for testing purposes
-    AppDataSource.dropDatabase()
-    console.log('\nDatabase dropped')
-  })
   .catch(error => console.log(error))
+
+/**
+ * Just for testing purposes
+ */
+async function cleanup() {
+  const userRepository = AppDataSource.getRepository(User)
+  const photoRepository = AppDataSource.getRepository(Photo)
+  const authorRepository = AppDataSource.getRepository(Author)
+
+  await userRepository.clear()
+  await photoRepository.clear()
+  await authorRepository.clear()
+}
