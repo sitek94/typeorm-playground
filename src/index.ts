@@ -1,61 +1,68 @@
 import {AppDataSource} from './data-source'
-import {Author} from './entities/author.entity'
+import {Album} from './entities/album.entity'
 import {PhotoMetadata} from './entities/photo-metadata.entity'
 import {Photo} from './entities/photo.entity'
-import {User} from './entities/user.entity'
 
-AppDataSource.initialize()
-  .then(async () => {
-    cleanup()
+await cleanup()
 
-    console.log('Database initialized\n')
+await AppDataSource.initialize()
 
-    // create a photo
-    const photo = new Photo()
-    photo.name = 'Me and Bears'
-    photo.description = 'I am near polar bears'
-    photo.filename = 'photo-with-bears.jpg'
-    photo.views = 1
-    photo.isPublished = true
+console.log('Database initialized\n')
 
-    // create a photo metadata
-    const metadata = new PhotoMetadata()
-    metadata.height = 640
-    metadata.width = 480
-    metadata.compressed = true
-    metadata.comment = 'cybershoot'
-    metadata.orientation = 'portrait'
-    metadata.photo = photo // this way we connect them
+const albumRepository = AppDataSource.getRepository(Album)
+const photoRepository = AppDataSource.getRepository(Photo)
 
-    // connect photo with metadata
-    photo.metadata = metadata
+// create a few albums
+const album1 = new Album()
+album1.name = 'Bears'
+await albumRepository.save(album1)
 
-    // get repository
-    const photoRepository = AppDataSource.getRepository(Photo)
+const album2 = new Album()
+album2.name = 'Me'
+await albumRepository.save(album2)
 
-    // saving a photo also save the metadata
-    await photoRepository.save(photo)
+// create a photo
+const photo = new Photo()
+photo.name = 'Me and Bears'
+photo.description = 'I am near polar bears'
+photo.filename = 'photo-with-bears.jpg'
+photo.views = 1
+photo.isPublished = true
+photo.albums = [album1, album2]
 
-    const photos = await photoRepository.find({
-      relations: {
-        metadata: true,
-      },
-    })
+// create a photo metadata
+const metadata = new PhotoMetadata()
+metadata.height = 640
+metadata.width = 480
+metadata.compressed = true
+metadata.comment = 'cybershoot'
+metadata.orientation = 'portrait'
+metadata.photo = photo // this way we connect them
 
-    console.log('All photos with metadata:')
-    console.log(photos)
-  })
-  .catch(error => console.log(error))
+// connect photo with metadata
+photo.metadata = metadata
+
+// saving a photo also save the metadata
+await photoRepository.save(photo)
+
+const photos = await photoRepository.findOne({
+  where: {
+    id: 1,
+  },
+  relations: {
+    metadata: true,
+    albums: true,
+  },
+})
+
+console.log('All photos with metadata:')
+console.log(photos)
 
 /**
  * Just for testing purposes
  */
 async function cleanup() {
-  const userRepository = AppDataSource.getRepository(User)
-  const photoRepository = AppDataSource.getRepository(Photo)
-  const authorRepository = AppDataSource.getRepository(Author)
-
-  await userRepository.clear()
-  await photoRepository.clear()
-  await authorRepository.clear()
+  await AppDataSource.initialize()
+  await AppDataSource.dropDatabase()
+  await AppDataSource.destroy()
 }

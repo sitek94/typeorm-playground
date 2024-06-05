@@ -5,9 +5,11 @@ import {
   OneToOne,
   type Relation,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm'
 import {PhotoMetadata} from './photo-metadata.entity'
 import {Author} from './author.entity'
+import {Album} from './album.entity'
 
 @Entity()
 export class Photo {
@@ -36,6 +38,13 @@ export class Photo {
   })
   metadata: Relation<PhotoMetadata>
 
-  @ManyToOne(() => Author, author => author.photos)
+  @ManyToOne(() => Author, author => author.photos, {
+    cascade: true,
+  })
   author: Relation<Author>
+
+  @ManyToMany(() => Album, album => album.photos, {
+    cascade: true,
+  })
+  albums: Relation<Album[]>
 }
