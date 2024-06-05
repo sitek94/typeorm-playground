@@ -31,9 +31,13 @@ AppDataSource.initialize()
     // photo is saved. Now we need to save a photo metadata
     await metadataRepository.save(metadata)
 
-    // done
-    console.log(
-      'Metadata is saved, and the relation between metadata and photo is created in the database too',
-    )
+    const photos = await photoRepository.find({
+      relations: {
+        metadata: true,
+      },
+    })
+
+    console.log('All photos with metadata:')
+    console.log(photos)
   })
   .catch(error => console.log(error))
