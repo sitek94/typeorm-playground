@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: 'db/database.sqlite3',
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [User, Photo, PhotoMetadata],
   migrations: [],
   subscribers: [],

@@ -4,6 +4,8 @@ import {Photo} from './entities/photo.entity'
 
 AppDataSource.initialize()
   .then(async () => {
+    console.log('Database initialized\n')
+
     // create a photo
     const photo = new Photo()
     photo.name = 'Me and Bears'
@@ -21,15 +23,14 @@ AppDataSource.initialize()
     metadata.orientation = 'portrait'
     metadata.photo = photo // this way we connect them
 
-    // get entity repositories
+    // connect photo with metadata
+    photo.metadata = metadata
+
+    // get repository
     const photoRepository = AppDataSource.getRepository(Photo)
-    const metadataRepository = AppDataSource.getRepository(PhotoMetadata)
 
-    // first we should save a photo
+    // saving a photo also save the metadata
     await photoRepository.save(photo)
-
-    // photo is saved. Now we need to save a photo metadata
-    await metadataRepository.save(metadata)
 
     const photos = await photoRepository.find({
       relations: {
@@ -39,5 +40,10 @@ AppDataSource.initialize()
 
     console.log('All photos with metadata:')
     console.log(photos)
+  })
+  .then(() => {
+    // Clean up DB for testing purposes
+    AppDataSource.dropDatabase()
+    console.log('\nDatabase dropped')
   })
   .catch(error => console.log(error))
