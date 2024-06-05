@@ -45,15 +45,17 @@ photo.metadata = metadata
 // saving a photo also save the metadata
 await photoRepository.save(photo)
 
-const photos = await photoRepository.findOne({
-  where: {
-    id: 1,
-  },
-  relations: {
-    metadata: true,
-    albums: true,
-  },
-})
+const photos = await photoRepository
+  .createQueryBuilder('photo')
+  .innerJoinAndSelect('photo.metadata', 'metadata')
+  .innerJoinAndSelect('photo.albums', 'albums')
+  .where('photo.isPublished = true')
+  .andWhere('(photo.name = :photoName OR photo.name = :bearName)')
+  .orderBy('photo.id', 'DESC')
+  .skip(0)
+  .take(10)
+  .setParameters({photoName: 'Me and Bears', bearName: 'Bears'})
+  .getMany()
 
 console.log('All photos with metadata:')
 console.log(photos)
