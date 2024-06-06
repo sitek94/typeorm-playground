@@ -10,6 +10,8 @@ import {Category} from './entities/category.entity'
 import {Student} from './entities/student.entity'
 import {Name} from './entities/name.entity'
 import {Employee} from './entities/employee.entity'
+import {Post} from './entities/post.entity'
+import {PostPreview} from './entities/post-category.view-entity'
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
@@ -25,6 +27,8 @@ export const AppDataSource = new DataSource({
     Name,
     Photo,
     PhotoMetadata,
+    Post,
+    PostPreview,
     Student,
     User,
   ],
