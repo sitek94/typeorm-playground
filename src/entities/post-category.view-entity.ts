@@ -1,12 +1,16 @@
-import {sql} from '@/utils/sql'
 import {ViewColumn, ViewEntity} from 'typeorm'
+import {Category} from './category.entity'
+import {Post} from './post.entity'
 
 @ViewEntity({
-  expression: sql`
-    SELECT "post"."id" AS "id", "post"."title" AS "title", "category"."name" AS "categoryName"
-    FROM "post" "post"
-    LEFT JOIN "category" "category" ON "post"."categoryId" = "category"."id"
-  `,
+  expression: dataSource =>
+    dataSource
+      .createQueryBuilder()
+      .select('post.id', 'id')
+      .addSelect('post.title', 'title')
+      .addSelect('category.name', 'categoryName')
+      .from(Post, 'post')
+      .leftJoin(Category, 'category', 'category.id = post.categoryId'),
 })
 export class PostPreview {
   @ViewColumn()
