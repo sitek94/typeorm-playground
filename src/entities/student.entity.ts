@@ -2,7 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column} from 'typeorm'
 import {Name} from './name.entity'
 
 @Entity()
-export class User {
+export class Student {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -10,5 +10,5 @@ export class User {
   name: Name
 
   @Column()
-  age: number
+  faculty: string
 }
